@@ -10,97 +10,243 @@ import FAQ from "../../components/FAQ.astro";
 import CodePanel from "../../components/CodePanel.astro";
 ---
 
-<Layout title="Loop Engineering 入门" description="从 Prompt Engineering 到 Agent Loop：理解如何设计持续工作的 AI Agent 系统。">
+<Layout
+  title="Loop Engineering：从 Prompt 到可持续 Agent 工作系统"
+  description="一份由浅入深介绍 Loop Engineering 的富 UI 专题页，覆盖定义、核心组件、落地案例、边界设计和常见误区。"
+>
   <Hero
-    eyebrow="Agent Systems"
-    title="Loop Engineering 是什么？"
-    subtitle="它不是一个新工具，而是一种使用 Coding Agent 的高阶方法：围绕长期目标，设计观察、决策、执行、验证和记忆的闭环。"
-    primaryText="从定义开始"
+    eyebrow="AI Agent Playbook"
+    title="Loop Engineering：从 Prompt 到可持续 Agent 工作系统"
+    subtitle="Loop Engineering 不是让 AI 完全替代工程师，而是把 Agent 放进一个围绕长期目标运转的闭环系统：它观察状态、决定动作、执行任务、验证结果、记录历史，并在下一轮继续推进。"
+    primaryText="先看核心定义"
     primaryHref="#definition"
-    secondaryText="查看 FAQ"
-    secondaryHref="#faq"
+    secondaryText="看落地案例"
+    secondaryHref="#examples"
   />
 
-  <Section id="definition" title="一句话定义" lead="Loop Engineering 是把 Agent 放进一个带长期目标、状态反馈、外部记忆和验证机制的闭环控制系统里。">
-    <Callout title="核心判断">
-      <p>如果只是定时给 Agent 一个任务，那是 scheduled agent workflow；如果它会根据目标观察状态、决定动作、验证结果、记录历史，并在下一轮继续推进，那就是 loop。</p>
+  <Section
+    id="definition"
+    title="1. 先给一个准确但不复杂的定义"
+    lead="Loop Engineering 的重点不是某个工具，而是一种组织 Agent 工作的工程方法。"
+  >
+    <Callout title="一句话定义">
+      <p>Loop Engineering 是围绕一个长期 target，设计一套由 Agent 执行的闭环：observe → decide → act → verify → remember → repeat。</p>
     </Callout>
 
     <Comparison
-      leftTitle="普通 Prompt / Workflow"
-      rightTitle="Loop Engineering"
+      leftTitle="一次性 Agent Workflow"
+      rightTitle="Agent Loop"
       leftItems={[
-        "一次性任务",
-        "人手动告诉 Agent 做什么",
-        "状态主要留在对话里",
-        "执行完成就结束"
+        "目标通常是完成一个具体任务",
+        "由人手动发起和继续追问",
+        "执行完成后流程结束",
+        "状态主要存在当前对话里",
+        "失败后通常需要人重新组织上下文"
       ]}
       rightItems={[
-        "围绕长期 target",
-        "系统发现任务并分流",
-        "状态写入外部记忆",
-        "下一轮基于历史继续"
+        "目标是长期维持某种状态",
+        "由定时、事件或人工入口触发",
+        "每轮都会观察、判断、执行和验证",
+        "状态写入文件、issue、board 或数据库",
+        "下一轮会基于历史继续推进"
       ]}
     />
   </Section>
 
-  <Section id="building-blocks" title="一个 Loop 的基本组成" lead="不要把 loop 想复杂。它本质上就是把几个常见工程组件组合成一个闭环。">
+  <Section
+    id="mental-model"
+    title="2. 最重要的心智模型：重复的是结构，不是内容"
+    lead="很多人误以为 loop 只适合每天做一模一样的事。其实不对。Loop 自动化的是处理结构。"
+  >
     <FeatureGrid
       columns={3}
       items={[
-        { title: "Target", description: "长期目标，例如保持集群可用、保持中文翻译与英文一致。" },
-        { title: "Trigger", description: "触发方式，可以是 cron、CI 失败、issue 更新、告警或手动指令。" },
-        { title: "Observe", description: "读取当前状态，例如代码、日志、PR、翻译文件、集群健康。" },
-        { title: "Decide", description: "判断能否自动处理、是否高风险、是否需要人工确认。" },
-        { title: "Act", description: "执行动作，可以是修代码、补翻译、生成报告、开 PR。" },
-        { title: "Verify & Memory", description: "验证结果，并把过程写入状态文件或任务板，供下一轮使用。" }
+        { title: "内容可以每天不同", description: "今天是 CI 失败，明天是 issue triage，后天是 I18n key 变更。具体内容可以完全不同。" },
+        { title: "结构通常高度重复", description: "收集上下文、分类、判断风险、执行低风险动作、验证、记录，这些动作反复出现。" },
+        { title: "目标必须长期存在", description: "例如保持主分支健康、保持集群可用、保持中文翻译与英文一致。" }
       ]}
     />
+
+    <Callout title="判断标准">
+      <p>如果一个任务不是为了完成一次输出，而是为了长期维护某种状态，它就很可能适合被设计成 loop。</p>
+    </Callout>
   </Section>
 
-  <Section id="examples" title="三个典型例子" lead="Loop 不要求每天做完全一样的事情。重复的是处理结构，而不是具体内容。">
+  <Section
+    id="core-pieces"
+    title="3. 一个完整 Loop 由哪些部分组成？"
+    lead="你可以把 loop 看成一个小型控制系统。它不只是 cron，也不只是 skill，而是多个组件的组合。"
+  >
     <StepTimeline
       steps={[
-        { title: "集群可用性维护 Loop", description: "每天 8 点检查节点、Pod、日志、告警。如果是低风险问题自动修复，修复后验证；高风险问题只报告并升级。" },
-        { title: "I18n 翻译同步 Loop", description: "定期比较 en 与 zh-CN 文件，补充缺失 key，更新已变化文案，检查占位符一致性，并记录疑似 key rename。" },
-        { title: "Repo 健康维护 Loop", description: "每天读取 CI、issues、最近 commit，识别低风险修复项，开 worktree 尝试处理，测试通过后生成 PR。" }
+        { title: "Target：长期目标", description: "定义系统长期要维持什么，例如可用性、一致性、质量、覆盖率、知识库新鲜度。" },
+        { title: "Trigger：触发入口", description: "可以是 cron、CI 失败、GitHub issue 更新、告警、PR 创建，也可以是你手动说开始。" },
+        { title: "Observe：观察状态", description: "读取代码、日志、测试结果、翻译文件、任务板、状态文件或监控指标。" },
+        { title: "Decide：决策与分流", description: "判断哪些可以自动做，哪些只能分析，哪些必须交给人。" },
+        { title: "Act：执行动作", description: "调用 Agent、workflow skill、脚本、连接器或子 Agent 执行低风险动作。" },
+        { title: "Verify：验证结果", description: "用测试、lint、健康检查、占位符校验、review agent 或人工 review 判断是否达标。" },
+        { title: "Memory：外部记忆", description: "把结果写入状态文件、issue、Linear board 或数据库，让下一轮知道上次发生了什么。" }
       ]}
     />
   </Section>
 
-  <Section id="i18n" title="I18n Loop 的最小形态" lead="这是最适合作为第一个 loop 的场景：目标清晰、风险低、验证容易。">
-    <CodePanel
-      code={`长期目标：保持 zh-CN 翻译文件与 en 原文文件一致。
-
-每次运行：
-1. 读取 en.json 与 zh-CN.json
-2. 找出新增、删除、变更、疑似 rename 的 key
-3. 自动翻译低风险新增文案
-4. 检查占位符一致性
-5. 写回 zh-CN.json
-6. 生成同步报告
-7. 更新 I18N_STATE.md`}
-    />
-  </Section>
-
-  <Section id="pitfalls" title="常见误区" lead="Loop Engineering 最大的风险不是不会自动化，而是自动化边界设计得太粗。">
+  <Section
+    id="not-same"
+    title="4. Loop、CronJob、Workflow Skill、Claude Code 的区别"
+    lead="它们不是互斥关系，而是处于不同层级。"
+  >
     <FeatureGrid
       columns={2}
       items={[
-        { title: "误区一：Loop = CronJob", description: "Cron 只是触发器。Loop 还需要目标、状态、决策、验证和记忆。" },
-        { title: "误区二：Loop = Workflow Skill", description: "Skill 是 SOP，Loop 是调用 SOP 并持续推进目标的系统。" },
-        { title: "误区三：Loop 应该全自动", description: "好的 loop 应该知道什么时候停下来，并把高风险问题交给人。" },
-        { title: "误区四：Agent 可以自证正确", description: "写代码的 Agent 不应该完全负责检查自己。需要测试、规则或 reviewer agent。" }
+        { title: "CronJob", description: "负责什么时候开始。它是触发器，不负责长期目标、状态记忆和质量闭环。" },
+        { title: "Workflow Skill", description: "负责怎么做某类事。它像 SOP，本身不会自动发现任务，也不会持续维护目标。" },
+        { title: "Claude Code / Codex / Hermes", description: "负责具体执行。它们是 Agent 执行器，不等于 loop 本身。" },
+        { title: "Loop Engineering", description: "负责把触发器、skill、agent、状态、验证和升级机制串起来，围绕 target 持续运转。" }
+      ]}
+    />
+
+    <CodePanel
+      code={`CronJob = 什么时候跑
+Skill = 怎么做
+Agent = 谁来做
+Memory = 记住做到哪
+Verifier = 判断是否合格
+Loop = 把这些串成一个长期运转的系统`}
+    />
+  </Section>
+
+  <Section
+    id="examples"
+    title="5. 三个从简单到复杂的 Loop 案例"
+    lead="下面这些都算 loop，但风险等级不同。最适合从 I18n 或文档同步开始。"
+  >
+    <StepTimeline
+      steps={[
+        { title: "I18n Translation Consistency Loop", description: "长期目标是维持中文翻译文件与英文原件一致。每轮检查新增 key、删除 key、value 变更、占位符不一致和疑似 key rename，然后自动处理低风险翻译并生成报告。" },
+        { title: "Repo Health Loop", description: "长期目标是保持 main 分支健康。每天或每次 CI 失败时，读取测试、issue、最近 commit，识别低风险修复项，开 worktree 尝试处理，测试通过后生成 PR。" },
+        { title: "Cluster Availability Loop", description: "长期目标是保持集群可用。定时读取节点、Pod、日志和告警，只对 allowlist 中的低风险问题自动修复，高风险操作只生成诊断和建议。" }
       ]}
     />
   </Section>
 
-  <Section id="faq-section" title="FAQ" lead="几个容易混淆的问题。">
+  <Section
+    id="i18n-loop"
+    title="6. 最推荐的第一个 Loop：I18n 同步"
+    lead="它目标明确、输入输出清楚、风险较低、验证容易，非常适合作为 Loop Engineering 的第一个落地样板。"
+  >
+    <Comparison
+      leftTitle="一次性翻译任务"
+      rightTitle="I18n Sync Loop"
+      leftItems={[
+        "把这一批英文翻成中文",
+        "完成后就结束",
+        "下次英文变了还要重新提醒",
+        "容易漏 key、漏占位符、漏语义变化"
+      ]}
+      rightItems={[
+        "长期保持 zh-CN 与 en 一致",
+        "定期或在英文文件变化时运行",
+        "自动识别新增、删除、修改和 rename 候选",
+        "校验 key 集合、占位符、格式和待人工确认项"
+      ]}
+    />
+
+    <CodePanel
+      code={`目标：保持 zh-CN 翻译文件与 en 原文文件一致
+
+每轮流程：
+1. 读取 en.json / zh-CN.json
+2. 比较 key 集合和英文 value hash
+3. 识别新增、删除、修改、疑似 rename
+4. 自动翻译低风险新增和修改文案
+5. 保留变量占位符，例如 {name}、{{count}}、%s
+6. 检查格式、排序和占位符一致性
+7. 生成 i18n-sync-report
+8. 更新 I18N_STATE.md
+9. 对低置信度 rename、法律/支付/安全文案升级给人`}
+    />
+  </Section>
+
+  <Section
+    id="safety"
+    title="7. 真正的工程难点：边界、停止条件和升级机制"
+    lead="Loop 越自动，越需要明确知道哪些不能做。否则它不是提高效率，而是在自动放大错误。"
+  >
+    <FeatureGrid
+      columns={3}
+      items={[
+        { title: "权限边界", description: "默认只允许低风险动作。涉及生产、权限、数据、支付、安全的动作必须降级为分析报告。" },
+        { title: "停止条件", description: "连续失败、验证不通过、成本超限、置信度不足时必须停止，而不是无限重试。" },
+        { title: "人工升级", description: "高风险、不确定、上下文不足或影响范围过大时，loop 应该把问题交给人。" },
+        { title: "外部记忆", description: "状态不能只留在对话里。要写入状态文件、issue、PR comment 或任务板。" },
+        { title: "验证器", description: "不能让写代码的 Agent 自己完全判定成功。需要测试、规则、reviewer agent 或人工 review。" },
+        { title: "成本控制", description: "sub-agent、长上下文、多轮重试都会烧 token。loop 要有预算意识。" }
+      ]}
+    />
+  </Section>
+
+  <Section
+    id="implementation"
+    title="8. 如何从 0 到 1 落地一个小 Loop？"
+    lead="不要一开始就做“全自动工程师”。先做一个低风险、可验证、可回滚的小闭环。"
+  >
+    <StepTimeline
+      steps={[
+        { title: "选择一个长期 target", description: "例如保持 I18n 一致、维护文档新鲜度、总结 CI 失败、整理 issue。" },
+        { title: "写清楚输入和输出", description: "输入是什么文件、日志、issue 或指标？输出是报告、PR、状态文件还是页面？" },
+        { title: "定义 workflow skill", description: "把处理步骤写成 SOP，让 Agent 每次按同一套规则执行。" },
+        { title: "增加 memory", description: "用 I18N_STATE.md、PROJECT_STATE.md 或 issue comment 记录上次处理结果。" },
+        { title: "增加 verifier", description: "加格式校验、测试、lint、健康检查或 reviewer agent。" },
+        { title: "最后再加 trigger", description: "先手动运行稳定后，再接 cron、CI、GitHub Actions 或告警触发。" }
+      ]}
+    />
+  </Section>
+
+  <Section
+    id="pitfalls"
+    title="9. 常见误区"
+    lead="Loop Engineering 不是魔法，它只是把 Agent 放进更工程化的工作系统里。"
+  >
+    <FeatureGrid
+      columns={2}
+      items={[
+        { title: "误区一：Loop 就是 CronJob", description: "Cron 只是触发器。没有目标、状态、验证和记忆，就只是定时任务。" },
+        { title: "误区二：Loop 就是 Workflow Skill", description: "Skill 是 SOP；Loop 是把 SOP 调度起来，并基于状态持续推进目标。" },
+        { title: "误区三：每天事情不重复就不能 Loop", description: "能。重复的是处理结构，不是具体任务内容。" },
+        { title: "误区四：Loop 应该完全自动", description: "成熟的 loop 不是什么都做，而是知道什么能做、什么不能做、什么时候停。" },
+        { title: "误区五：有 Agent Review 就不用人 Review", description: "Agent Review 是过滤器，不是最终责任转移。关键代码仍要人确认。" },
+        { title: "误区六：状态放在上下文里就够了", description: "不够。长期运行的 loop 必须把状态写到 repo、board 或数据库里。" }
+      ]}
+    />
+  </Section>
+
+  <Section
+    id="summary"
+    title="10. 最后总结"
+    lead="Loop Engineering 的价值，不是让工程师消失，而是把工程师从重复的追问、整理和跟进中释放出来。"
+  >
+    <Callout title="最短版本">
+      <p>Prompt Engineering 关心“我怎么问 AI”；Loop Engineering 关心“我怎么设计一个系统，让 AI 持续、可靠、可控地围绕目标工作”。</p>
+    </Callout>
+
+    <CodePanel
+      code={`Build the loop.
+Stay the engineer.
+
+设计 loop，但不要放弃工程判断。
+让 Agent 自动推进低风险重复结构，
+把高风险、不确定和需要取舍的部分留给工程师。`}
+    />
+  </Section>
+
+  <Section id="faq-section" title="FAQ" lead="几个最容易混淆的问题。">
     <FAQ
       items={[
-        { question: "每天任务都不一样，还能 loop 吗？", answer: "能。Loop 自动化的是重复的处理结构，例如观察、分类、执行、验证、记录，而不是要求每天的具体任务一样。" },
-        { question: "Loop 和 Claude Code 有什么区别？", answer: "Claude Code 是执行工具。Loop Engineering 是用这些工具设计持续工作的系统。" },
-        { question: "什么样的任务最适合第一个 loop？", answer: "推荐从 I18n 同步、文档更新、CI 失败总结、issue triage 这类低风险、高验证性的任务开始。" }
+        { question: "我的 cron 定时给 Hermes 一个任务，并且会调用 workflow skill，这算 loop 吗？", answer: "这是 loop 的雏形。如果它还有长期目标、外部状态、验证、失败停止和人工升级机制，就可以算完整 loop。" },
+        { question: "每天处理的事情大多不一样，还能 loop 吗？", answer: "能。Loop 不要求内容重复，它要求处理结构可标准化，例如观察、分类、执行、验证、记录。" },
+        { question: "I18n 英文到中文同步算 loop 吗？", answer: "算，而且是很适合作为第一个 loop 的场景。长期目标是维持中文翻译文件与英文原件一致。" },
+        { question: "Loop 和 Claude Code 有什么区别？", answer: "Claude Code 是执行器；Loop Engineering 是把执行器、触发器、skill、状态和验证机制组织成长期工作系统的方法。" },
+        { question: "最小可行 loop 应该从哪里开始？", answer: "从低风险、易验证、可回滚的任务开始，例如 I18n 同步、文档同步、CI 失败总结、issue triage。" }
       ]}
     />
   </Section>
