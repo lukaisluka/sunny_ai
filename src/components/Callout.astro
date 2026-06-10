@@ -1,0 +1,8 @@
+---
+const { title = "重点" } = Astro.props;
+---
+
+<div class="callout">
+  <strong>{title}</strong>
+  <div><slot /></div>
+</div>
