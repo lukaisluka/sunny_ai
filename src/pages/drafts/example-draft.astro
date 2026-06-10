@@ -1,0 +1,19 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Hero from "../../components/Hero.astro";
+import Section from "../../components/Section.astro";
+---
+
+<Layout title="Draft Example" description="Draft page example.">
+  <Hero
+    eyebrow="Draft"
+    title="Draft Example"
+    subtitle="This page demonstrates the draft area for future AI-generated pages."
+    primaryText="Home"
+    primaryHref="/"
+    secondaryText="Protocol"
+    secondaryHref="/content-protocol"
+  />
+
+  <Section id="draft" title="Draft Area" lead="Use this area to keep pages before moving them into posts or guides." />
+</Layout>
