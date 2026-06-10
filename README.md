@@ -74,3 +74,7 @@ src/pages/guides/loop-engineering.astro
 ```text
 https://你的域名/guides/loop-engineering
 ```
+
+## Deployment note
+
+Cloudflare Pages should build from the latest commit on the default branch.
