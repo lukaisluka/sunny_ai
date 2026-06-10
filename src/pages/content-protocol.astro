@@ -1,0 +1,30 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero.astro";
+import Section from "../components/Section.astro";
+import CodePanel from "../components/CodePanel.astro";
+---
+
+<Layout title="AI Publishing Protocol" description="Sunny AI 的 AI 发布协议。">
+  <Hero
+    eyebrow="Protocol"
+    title="AI 发布协议"
+    subtitle="这个页面定义 AI 往网站写入内容时的路径、格式和安全约束。"
+    primaryText="查看规则"
+    primaryHref="#rules"
+    secondaryText="返回首页"
+    secondaryHref="/"
+  />
+
+  <Section id="rules" title="核心规则">
+    <CodePanel
+      code={`1. 默认生成 .astro 页面，不生成 Markdown。
+2. 草稿写入 src/pages/drafts/
+3. 正式专题写入 src/pages/guides/
+4. 普通文章写入 src/pages/posts/
+5. 页面必须复用组件，不要堆内联样式。
+6. 不自动发布密钥、token、内部敏感信息。
+7. 用户明确说“发布”才进入公开目录。`}
+    />
+  </Section>
+</Layout>
