@@ -1,0 +1,13 @@
+---
+const { eyebrow = "Guide", title, subtitle, primaryText = "开始阅读", primaryHref = "#start", secondaryText = "查看 FAQ", secondaryHref = "#faq" } = Astro.props;
+---
+
+<header class="hero">
+  <div class="eyebrow">{eyebrow}</div>
+  <h1>{title}</h1>
+  <p>{subtitle}</p>
+  <div class="hero-actions">
+    <a class="button primary" href={primaryHref}>{primaryText}</a>
+    <a class="button" href={secondaryHref}>{secondaryText}</a>
+  </div>
+</header>
