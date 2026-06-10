@@ -1,0 +1,33 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero.astro";
+import Section from "../components/Section.astro";
+import FeatureGrid from "../components/FeatureGrid.astro";
+---
+
+<Layout title="Sunny AI" description="一个适合 AI 自动发布富 UI 文章的个人内容网站。">
+  <Hero
+    eyebrow="AI Publishing"
+    title="把 AI 生成的内容，变成可分享的富 UI 网页"
+    subtitle="Sunny AI 不是普通 Markdown 博客，而是面向 AI 写入的组件化内容站。你可以让 AI 生成专题页、技术报告、教程和分享页，然后自动保存到 GitHub 并发布。"
+    primaryText="查看示例专题"
+    primaryHref="/guides/loop-engineering"
+    secondaryText="查看发布协议"
+    secondaryHref="/content-protocol"
+  />
+
+  <Section
+    id="start"
+    title="它解决什么问题？"
+    lead="你经常让 AI 生成文章，但缺少一个好看的、可分享的发布出口。这个网站把 GitHub 仓库变成 AI 可写入的内容库。"
+  >
+    <FeatureGrid
+      columns={3}
+      items={[
+        { title: "不用 Markdown", description: "每篇文章都可以是带组件的 Astro 页面，适合做视觉丰富的专题页。" },
+        { title: "AI 可写入", description: "内容路径和组件规范固定，AI 可以稳定生成页面并写入仓库。" },
+        { title: "自动部署", description: "连接 Cloudflare Pages 或 Vercel 后，push 即发布。" }
+      ]}
+    />
+  </Section>
+</Layout>
