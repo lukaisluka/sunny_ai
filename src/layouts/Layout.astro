@@ -1,0 +1,33 @@
+---
+import "../styles/global.css";
+const { title = "Sunny AI", description = "一个由 AI 协助维护的富 UI 个人内容网站。" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <main class="site-shell">
+      <nav class="nav">
+        <a class="brand" href="/">
+          <span class="brand-mark"></span>
+          <span>Sunny AI</span>
+        </a>
+        <div class="nav-links">
+          <a href="/guides/loop-engineering">示例专题</a>
+          <a href="/drafts/example-draft">草稿示例</a>
+          <a href="/content-protocol">发布协议</a>
+        </div>
+      </nav>
+      <slot />
+      <footer class="footer">
+        <p>Built for AI-assisted publishing. 内容由 AI 协助生成，但最终发布应由作者确认。</p>
+      </footer>
+    </main>
+  </body>
+</html>
